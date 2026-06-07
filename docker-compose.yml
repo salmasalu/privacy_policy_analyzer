@@ -1,0 +1,72 @@
+version: "3.9"
+
+services:
+
+  db:
+    image: postgres:15-alpine
+    container_name: privacy_analyzer_db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: privacy_analyzer
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: .
+    container_name: privacy_analyzer_api
+    restart: always
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/privacy_analyzer
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+
+  streamlit:
+    build: .
+    container_name: privacy_analyzer_streamlit
+    restart: always
+    command: streamlit run app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql://postgres:password@db:5432/privacy_analyzer
+    depends_on:
+      - api
+    volumes:
+      - .:/app
+
+  mlflow:
+    image: python:3.10.9-slim
+    container_name: privacy_analyzer_mlflow
+    restart: always
+    command: >
+      bash -c "pip install mlflow &&
+               mlflow server --host 0.0.0.0 --port 5000
+               --backend-store-uri sqlite:///mlflow.db
+               --default-artifact-root ./mlruns"
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflow_data:/mlflow
+
+volumes:
+  postgres_data:
+  mlflow_data:

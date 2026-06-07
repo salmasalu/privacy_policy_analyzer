@@ -1,0 +1,15 @@
+.env
+venv/
+__pycache__/
+*.pyc
+*.pyo
+mlruns/
+mlflow.db
+classification_report.txt
+*.db
+*.sqlite
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+logs/
