@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from core.llm_engine import explain_risk
+from  app.core.llm_engine import explain_risk
 
 print("=" * 55)
 print("TEST: llm_engine.py (Groq API)")

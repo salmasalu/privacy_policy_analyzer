@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from core.extractor import extract_text_from_url, extract_text_from_input
+from app.core.extractor import extract_text_from_url, extract_text_from_input
 
 print("=" * 55)
 print("TEST: extractor.py")

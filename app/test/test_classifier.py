@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
 
-from core.classifier import analyze_clauses
+from app.core.classifier import analyze_clauses
 
 print("=" * 55)
 print("TEST: classifier.py")
